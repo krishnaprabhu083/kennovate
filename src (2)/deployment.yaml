@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kennovate-portal
+  labels:
+    app: kennovate-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kennovate-portal
+  template:
+    metadata:
+      labels:
+        app: kennovate-portal
+    spec:
+      containers:
+        - name: kennovate-portal
+          image: ken42registry.azurecr.io/stpi-stage/kennovate-portal:#{Build.BuildId}#
+          ports:
+            - containerPort: 80
+      tolerations:
+        - key: "agentpool"
+          operator: "Equal"
+          value: "application"
+          effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kennovate-portal
+spec:
+  selector:
+    app: kennovate-portal
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
